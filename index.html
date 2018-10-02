@@ -52,10 +52,21 @@
           </ul>
         </section>
         <section>
+          <h2>Box Application Setup</h2>
+          <ul>
+            <li>Login to your Box Developer console
+            Create a new App Token Application</li>
+            <li>Generate a new App Token and save it somewhere</li>
+            <li>In the CORS domains configuration add localhost:8080</li>
+            <li>Keep it open...</li>
+          </ul>
+        </section>
+        <section>
           <section>
             <h2>Token Exchange</h2>
             <ul>
-              <li class="fragment">Why?</li>
+              <li class="fragment">What?</li>
+              <li class="fragment">API Endpoint that allows developers to exchange their App token for a token with... less scope</li>
               <li class="fragment">Token scope can limited to a single item (folder or files)</li>
               <li class="fragment">Because the scope can be controlled, it is safer to pass to the client (the browser).</li>
               <li class="fragment">For example, to Box View (Box Javascript library)</li>
@@ -130,6 +141,20 @@ curl https://api.box.com/oauth2/token \
               </code>
             </pre>            
           </section>
+          <section>
+            <p>Base64 encoded JWT Assertion</p>
+            <pre>
+              <code>
+base64URLencoded_header.base64URLencoded_claims.base64encoded_signature
+              </code>
+              <p>example</p>
+              <pre>
+                <code>
+eyJhbGciOiJub25lIn0K.eyJpc3MiOiJsZm9jbTE0ZmM5c3BtaGVyczRlajNkeXFjZXp0cjRqYSIsInN1YiI6IjEyMzQiLCJib3hfc3ViX3R5cGUiOiJleHRlcm5hbCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJveC5jb20vb2F1dGgyL3Rva2VuIiwiZXhwIjoxNDc4MjkzNzMwLCJqdGkiOiI4OXVpaGtqZGJmYXNjdGhlMTkxNDc4MjkzNzMwIiwibmFtZSI6IklkZW50aXR5IERlbW8ifQo=.
+                </code>
+              </pre>
+            </pre>
+          </section>
         </section>  
         <section>
           <section>
@@ -142,7 +167,7 @@ curl https://api.box.com/oauth2/token \
             <h4>Sublime Text Packages</h4>
             <ul>
               <li class="fragment">Add additional functionality to Sublime Text</li>
-              <li class="fragment"><code>cmd + shift + p</code> to open command prompt</li>
+              <li class="fragment"><pre><code>cmd + shift + p</code></pre>to open command prompt</li>
               <li class="fragment">Enhanced Sidebar</li>
             </ul>
           </section>
@@ -179,7 +204,80 @@ npm install --save express mustache-express box-node-sdk #Install and save packa
         <section>
           <section>
             <h3>Looking at the code</h3>
+            <li class="fragment">First, Hello World!</li>
           </section>
+          <section>
+            <pre>
+              <code class="hljs javascript">
+console.log('Hello World!');
+              </code>
+            </pre>
+          </section>
+          <section>
+            <p>app.js</p>
+            <ul>
+              <li>Core of our application</li>
+            </ul>
+          </section>
+          <section>
+            <p>Assign needed variables</p>
+            <p>File ID's</p>
+            <pre>
+              <code class="hljs javascript">
+const wrdFileId = 'YOUR_WORD_FILE_ID';
+const pptFileID = 'YOUR_PPT_FILE_ID';
+const xlsFileID = 'YOUR_EXCEL_FILE_ID';                
+              </code>
+            </pre>
+          </section>
+          <section>
+            <p>Initialize the Box SDK with our Application credentials</p>
+            <pre>
+              <code class="hljs javascript">
+// Initialize an instance of the Box SDK with the Client ID
+const sdk = new BoxSDK({
+  clientID: 'CLIENT_ID',
+  clientSecret: ''
+});
+
+// Set the Application Token as a variable
+
+const appToken = '<APP_TOKEN>';
+
+let client = sdk.getBasicClient(appToken);                              
+              </code>
+            </pre>
+          </section>
+          <section>
+            <p>Add your name for Annotations. This will be included with our token request</p>
+            <pre>
+              <code class="hljs javascript">
+  let options = {
+    actor: {
+      id: '123456',
+      name: 'YOUR_NAME'
+    }
+  };              
+              </code>
+            </pre>            
+          </section>
+        </section>
+        <section>
+          <p>Rendering the View with the Box SDK and Express</p>
+          <pre>
+            <code class="hljs javascript">
+app.get('/boxviewword', (req, res) => {
+client.exchangeToken(scopes, `https://api.box.com/2.0/files/${wrdFileId}`, options)
+  .then(tokenInfo => {
+    token = tokenInfo.accessToken;
+    res.render('boxviewword', {
+      fileId: wrdFileId,
+      token: token
+    })
+  })
+});              
+            </code>
+          </pre>
         </section>
       </div>
     </div>
