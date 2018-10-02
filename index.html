@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>reveal-demo</title>
+    <title>Box View App Excercise</title>
 
     <link rel="stylesheet" href="css/reveal.css">
     <link rel="stylesheet" href="css/theme/black.css">
 
     <!-- Theme used for syntax highlighting of code -->
     <link rel="stylesheet" href="lib/css/zenburn.css">
+
 
     <!-- Printing and PDF exports -->
     <script>
@@ -24,8 +25,162 @@
   <body>
     <div class="reveal">
       <div class="slides">
-        <section>Slide 1</section>
-        <section>Slide 2</section>
+        <section>
+          <h1>Box View w/ Annotations</h1>
+        </section>
+        <section data-background-image="img/bobross.jpg"></section>
+        <section>
+          <p>Build a node.js application with Box View + Annotator View</p>
+        </section>
+        <section>
+          <h1>Application Overview</h1>
+          <ul>
+            <li class="fragment">Server - <a href="https://nodejs.org/en/" target="_blank">Node JS</a></li>
+            <li class="fragment">Framework - <a href="http://expressjs.com/" target="_blank">Express</a></li>
+            <li class="fragment">Markup - <a href="http://mustache.github.io/" target="_blank">Mustache</a></li>
+            <li class="fragment"><a href="https://github.com/box/box-node-sdk">Box Node SDK</a></li>
+            <li class="fragment"><a href="https://developer.box.com/docs/box-view" target="_blank">Box View Javascript</a></li>
+            <li class="fragment">Box Application</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Checklist</h3>
+          <ul>
+            <li>Node</li>
+            <li>NPM</li>
+            <li>Sublime text (or other text editor)</li>
+          </ul>
+        </section>
+        <section>
+          <section>
+            <h2>Token Exchange</h2>
+            <ul>
+              <li class="fragment">Why?</li>
+              <li class="fragment">Token scope can limited to a single item (folder or files)</li>
+              <li class="fragment">Because the scope can be controlled, it is safer to pass to the client (the browser).</li>
+              <li class="fragment">For example, to Box View (Box Javascript library)</li>
+            </ul>           
+          </section>
+          <section>
+            <h3>Token Exchange</h3>
+            <pre>
+              <code class="hljs bash">
+curl https://api.box.com/oauth2/token \
+-d 'subject_token=PARENT_TOKEN' \
+-d 'subject_token_type=urn:ietf:params:oauth:token-type:access_token' \
+-d 'scope=item_upload item_preview base_explorer' \
+-d 'resource=https://api.box.com/2.0/folders/123456' \
+-d 'grant_type=urn:ietf:params:oauth:grant-type:token-exchange' \
+-X POST
+              </code>             
+            </pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2><a href="https://developer.box.com/docs/getting-started-box-view" target="_blank">Annotator (Actor) Token</a></h2>
+            <ul>
+              <li class="fragment">Special downscoped Token</li>
+              <li class="fragment">User to make annotations with User ID and Name</li>
+              <li class="fragment">Also supports highlighting</li>
+
+            </ul>           
+          </section>
+          <section>
+            <h3>Annotator Token Exchange</h3>
+            <pre>
+              <code class="hljs bash">
+curl https://api.box.com/oauth2/token \
+-d 'subject_token=YOUR-PRIMARY-OR-SECONDARY-APP-TOKEN' \
+-d 'subject_token_type=urn:ietf:params:oauth:token-type:access_token' \
+-d 'scope=item_preview' \
+-d 'resource=https://api.box.com/2.0/files/{file_id}' \
+-d 'grant_type=urn:ietf:params:oauth:grant-type:token-exchange' \
+-d 'actor_token=JWT-ASSERTION-FOR-ACTOR-TOKEN' \
+-d 'actor_token_type=urn:ietf:params:oauth:token-type:id_token' \
+-X POST               
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h3>JWT Assertion for Actor Tokens</h3>
+            <h5>headers</h5>
+            <pre>
+              <code class="hljs javascript">
+{
+    "alg": "none",
+    "typ": "JWT"
+}                 
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h5>Claims</h5>
+            <pre>
+              <code class="hljs javascript">
+{
+    "iss": "API-KEY",
+    "sub": "EXTERNAL-USER-ID",
+    "box_sub_type": "external",
+    "aud": "https://api.box.com/oauth2/token",
+    "jti": "M4yeY3W63TxHa9jFek85",
+    "exp": 1428699385,
+    "name":"EXTERNAL-DISPLAY-NAME"
+}               
+              </code>
+            </pre>            
+          </section>
+        </section>  
+        <section>
+          <section>
+            <ol>
+              <li>Open Terminal</li>
+              <li>Open the folder in Sublime Text</li>
+            </ol>           
+          </section>
+          <section>
+            <h4>Sublime Text Packages</h4>
+            <ul>
+              <li class="fragment">Add additional functionality to Sublime Text</li>
+              <li class="fragment"><code>cmd + shift + p</code> to open command prompt</li>
+              <li class="fragment">Enhanced Sidebar</li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h4>In Terminal</h4>
+            <ol>
+              <li>Navigate to your project folder</li>
+              <li>Install Node dependenicies using NPM (Node Package Manager) to <a href="https://docs.npmjs.com/files/package.json" target="_blank">package.json</a></li>
+
+            </ol>         
+          </section>
+          <section>
+            <h4>NPM (Node Package Manager)</h4>
+            <ul>
+              <li class="fragment">Dependency manager</li>
+              <li class="fragment">Thousands of managed packages for developers</li>
+              <li class="fragment"><span class="fragment">Box Node SDK,</span> <span class="fragment">Express,</span> <span class="fragment">Mustache installed with NPM</span></li>              
+            </ul>
+          </section>
+          <section>
+            <h4>Basic installation of dependencies</h4>
+            <pre>
+              <code class="hljs bash">
+npm init #Initialize npm package.json file
+npm install --save express mustache-express box-node-sdk #Install and save packages to package.json
+              </code>
+            </pre>
+
+          </section>
+
+        </section>
+        <section>
+          <section>
+            <h3>Looking at the code</h3>
+          </section>
+        </section>
       </div>
     </div>
 
@@ -33,31 +188,11 @@
     <script src="js/reveal.js"></script>
 
     <script>
-      function getParameterByName(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-          results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-      }
-      var role = getParameterByName('role');
-      role = role === 'master' ? role : 'client';
-
-      // More info https://github.com/hakimel/reveal.js#configuration
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
       Reveal.initialize({
-        history: true,
-        multiplex: {
-          secret: '15384374930333795466',
-          id: 'cb12bc7196666e92',
-          url: 'https://reveal-js-multiplex-ccjbegmaii.now.sh'
-        },
-
-        // More info https://github.com/hakimel/reveal.js#dependencies
         dependencies: [
-          { src: 'assets/lib/socket.io.min.js', async: true },
-          { src: 'plugin/multiplex/' + role + '.js', async: true },
           { src: 'plugin/markdown/marked.js' },
           { src: 'plugin/markdown/markdown.js' },
           { src: 'plugin/notes/notes.js', async: true },
